@@ -1,98 +1,59 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { ScrollView, StyleSheet, View } from "react-native";
+import BadgeCard from "../components/BadgeCard";
+import PokemonCard from "../components/PokemonCard";
+import Titre from "../components/Titre";
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+const POKEMONS = [
+  { number: 1, name: "Bulbizarre", type: "Plante" },
+  { number: 4, name: "Salamèche", type: "Feu" },
+  { number: 7, name: "Carapuce", type: "Eau" },
+  { number: 25, name: "Pikachu", type: "Électrik" },
+  { number: 37, name: "Goupix", type: "Feu" },
+  { number: 43, name: "Mystherbe", type: "Plante" },
+];
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
+const BADGES = [
+  { number: 23, name: "Boulder Badge" },
+  { number: 25, name: "Thunder Badge" },
+  { number: 54, name: "Zephyr Badge" },
+];
+
+export default function Index() {
+  console.log(POKEMONS.map((p) => p.name));
+  const feu = POKEMONS.filter((p) => p.type === "Feu");
+  console.log(feu.map((p) => p.name));
+
   return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
-
-export default function HomeScreen() {
-  return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
-
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
-
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
+    <ScrollView style={styles.container}>
+      <Titre titre="Mon Pokedex" nombres={POKEMONS.length} />
+      <View>
+        {POKEMONS.map((pokemon) => (
+          <PokemonCard
+            name={pokemon.name}
+            number={pokemon.number}
+            type={pokemon.type}
           />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
-
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+        ))}
+      </View>
+      <Titre titre={"Mes types feu"} nombres={feu.length} />
+      <View>
+        {feu.map((feu) => (
+          <PokemonCard name={feu.name} number={feu.number} type={feu.type} />
+        ))}
+      </View>
+      <Titre titre={"Mes Badges"} nombres={BADGES.length} />
+      <View>
+        {BADGES.map((badges) => (
+          <BadgeCard name={badges.name} number={badges.number} />
+        ))}
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: "#eeeff7",
     flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
-  },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
-  },
-  title: {
-    textAlign: 'center',
-  },
-  code: {
-    textTransform: 'uppercase',
-  },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
   },
 });

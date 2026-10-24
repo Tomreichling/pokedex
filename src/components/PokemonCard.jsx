@@ -1,4 +1,5 @@
-import { Image, StyleSheet, Text, View } from "react-native";
+import { useState } from "react";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 
 const ARTWORK =
   "https://raw.githubusercontent.com/PokeAPI/sprites" +
@@ -13,8 +14,9 @@ const TYPE_COLORS = {
 
 export default function PokemonCard({ name, number, type }) {
   const color = TYPE_COLORS[type];
+  const [isCaptured, SetCapture] = useState(false);
   return (
-    <View style={styles.card}>
+    <View style={isCaptured ? styles.card1 : styles.card2 }>
       <Image source={{ uri: `${ARTWORK}${number}.png` }} style={styles.image} />
 
       <View style={styles.infoContainer}>
@@ -22,13 +24,32 @@ export default function PokemonCard({ name, number, type }) {
         <Text style={styles.textsBold}>{name} </Text>
         <Text style={[styles.type, { backgroundColor: color }]}> {type} </Text>
       </View>
+      <Pressable style= {isCaptured ? styles.button1 : styles.button2 } onPress= {() => SetCapture(!isCaptured)}>
+        <Text style= {isCaptured ? styles.text1 : styles.text2 }>
+          {isCaptured ? "Capturé ✓" : "Capturer"}
+        </Text>
+      </Pressable>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
+  card1: {
+    backgroundColor: "#e5effe",
+    borderWidth: 2,
+    borderColor: "#2573e7",
+    borderRadius: 15,
+    padding: 20,
+    marginHorizontal: 30,
+    marginVertical: 10,
+    alignItems: "center",
+    justifyContent: "flex-start",
+    flexDirection: "row",
+  },
+  card2: {
     backgroundColor: "#ffffff",
+    borderWidth: 2,
+    borderColor: "#ffffff",
     borderRadius: 15,
     padding: 20,
     marginHorizontal: 30,
@@ -62,4 +83,22 @@ const styles = StyleSheet.create({
     marginTop: 5,
     textAlign: "center",
   },
+  button1: {
+    backgroundColor: "#2573e7",
+    borderRadius: 20,
+    padding: 5,
+  },
+  button2: {
+    color: "#2573e7",
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: "#2573e7",
+    padding: 5,
+  },
+  text1: {
+    color: "#ffffff",
+  },
+ text2: {
+    color: "#2573e7",
+  }
 });

@@ -1,17 +1,9 @@
 import { useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import BadgeCard from "../components/BadgeCard";
 import PokemonCard from "../components/PokemonCard";
 import Titre from "../components/Titre";
-
-const POKEMONS = [
-  { number: 1, name: "Bulbizarre", type: "Plante" },
-  { number: 4, name: "Salamèche", type: "Feu" },
-  { number: 7, name: "Carapuce", type: "Eau" },
-  { number: 25, name: "Pikachu", type: "Électrik" },
-  { number: 37, name: "Goupix", type: "Feu" },
-  { number: 43, name: "Mystherbe", type: "Plante" },
-];
+import POKEMONS from "../data/pokemons";
 
 const BADGES = [
   { number: 23, name: "Boulder Badge" },
@@ -20,46 +12,82 @@ const BADGES = [
 ];
 
 export default function Index() {
-  console.log(POKEMONS.map((p) => p.name));
-  const feu = POKEMONS.filter((p) => p.type === "Feu");
-  console.log(feu.map((p) => p.name));
+
 
   const [filtreFeu, SetFiltreFeu] = useState(false);
-  const [search, setSearch] = useState("");
+  const [filtreCaptures, SetFiltreCaptures] = useState(false);
+  const [captures, setCaptures] = useState<number[]>([]);
 
-  const visible = filtreFeu ?  POKEMONS.filter((p) => p.type === "Feu"): POKEMONS;
+  function capturer(number: number) {
+    if (captures.includes(number)) {
+      setCaptures(captures.filter((capturedNumber) => capturedNumber !== number));
+    } else {
+      setCaptures([...captures, number]);
+    }
+  }
+
+  let visible = filtreFeu ? POKEMONS.filter((p) => p.type === "Feu") : POKEMONS;
+  visible = filtreCaptures ? visible.filter((p) => captures.includes(p.number)) : visible;
 
   return (
-    <ScrollView style={styles.container}>
-      <Titre titre="Mon Pokedex" nombres={POKEMONS.length} />
-      <View style={styles.filters}>
-        <Pressable onPress={() => SetFiltreFeu(!filtreFeu)} style={filtreFeu ? styles.ButtonTypeSelected : styles.ButtonTypeNotSelected}>
-          <Text style={filtreFeu ? styles.textTypeSelected : styles.textTypeNotSelected}>
-            {!filtreFeu ? "Type Feu" : " Tout afficher"}
-          </Text>
-        </Pressable>
+
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>Mon Pokédex</Text>
+        <Text style={styles.count}>
+          {POKEMONS.length} Pokémon · {captures.length} capturés
+        </Text>
+
+        <View style={styles.filters}>
+          <Pressable
+            onPress={() => SetFiltreFeu(!filtreFeu)}
+            style={filtreFeu ? styles.ButtonTypeSelected : styles.ButtonTypeNotSelected}
+          >
+            <Text style={filtreFeu ? styles.textTypeSelected : styles.textTypeNotSelected}>
+              {!filtreFeu ? "Type Feu" : "Tout afficher"}
+            </Text>
+          </Pressable>
+          <Pressable
+            onPress={() => SetFiltreCaptures(!filtreCaptures)}
+            style={filtreCaptures ? styles.ButtonTypeSelected : styles.ButtonTypeNotSelected}
+          >
+            <Text style={filtreCaptures ? styles.textTypeSelected : styles.textTypeNotSelected}>
+              {!filtreCaptures ? "Mes captures" : "Tout afficher"}
+            </Text>
+          </Pressable>
+        </View>
       </View>
-      <View>
-        {visible.map((pokemon) => (
+      
+      <FlatList
+        style={styles.list}
+        contentContainerStyle={styles.listContent}
+        data={visible}
+        keyExtractor={(item) => String(item.number)}
+        extraData={captures}
+        numColumns={2}
+        renderItem={({ item }) => (
           <PokemonCard
-            key={pokemon.number}
-            name={pokemon.name}
-            number={pokemon.number}
-            type={pokemon.type}
+            name={item.name}
+            number={item.number}
+            type={item.type}
+            captured={captures.includes(item.number)}
+            onCapture={() => capturer(item.number)}
           />
-        ))}
-      </View>
-      <Titre titre={"Mes Badges"} nombres={BADGES.length} />
-      <View>
-        {BADGES.map((badges) => (
-          <BadgeCard
-            key={badges.number}
-            name={badges.name}
-            number={badges.number}
-          />
-        ))}
-      </View>
-    </ScrollView>
+        )}
+        ListFooterComponent={
+          <View style={styles.badges}>
+            <Titre titre="Mes Badges" nombres={BADGES.length} />
+            {BADGES.map((badge) => (
+              <BadgeCard
+                key={badge.number}
+                name={badge.name}
+                number={badge.number}
+              />
+            ))}
+          </View>
+        }
+      />
+    </View>
   );
 }
 
@@ -67,6 +95,25 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: "#eeeff7",
     flex: 1,
+  },
+  header: {
+    padding: 14,
+  },
+  list: {
+    flex: 1,
+  },
+  listContent: {
+    paddingHorizontal: 14,
+    paddingBottom: 14,
+  },
+  title: {
+    fontSize: 30,
+    fontWeight: "800",
+  },
+  count: {
+    fontSize: 15,
+    marginLeft: 5,
+    marginBottom: 8,
   },
   ButtonTypeSelected: {
     alignItems: "center",
@@ -91,9 +138,11 @@ const styles = StyleSheet.create({
     color: "black",
   },
   filters: {
-    flex: 1,
     flexDirection: "row",
     marginHorizontal: 20,
-
-  }
+    marginBottom: 8,
+  },
+  badges: {
+    marginTop: 16,
+  },
 });

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 
 const ARTWORK =
@@ -10,13 +9,22 @@ const TYPE_COLORS = {
   Feu: "#F08030",
   Eau: "#6890F0",
   Électrik: "#F8D030",
+  Insecte: "#A8B820",
+  Normal: "#A8A878",
+  Poison: "#A040A0",
+  Fée: "#EE99AC",
+  Sol: "#E0C068",
+  Combat: "#C03028",
+  Psy: "#F85888",
+
 };
 
-export default function PokemonCard({ name, number, type }) {
+
+export default function PokemonCard({ name, number, type, captured, onCapture}) {
   const color = TYPE_COLORS[type];
-  const [isCaptured, SetCapture] = useState(false);
+  
   return (
-    <View style={isCaptured ? styles.card1 : styles.card2 }>
+    <View style={captured ? styles.card1 : styles.card2 }>
       <Image source={{ uri: `${ARTWORK}${number}.png` }} style={styles.image} />
 
       <View style={styles.infoContainer}>
@@ -24,9 +32,10 @@ export default function PokemonCard({ name, number, type }) {
         <Text style={styles.textsBold}>{name} </Text>
         <Text style={[styles.type, { backgroundColor: color }]}> {type} </Text>
       </View>
-      <Pressable style= {isCaptured ? styles.button1 : styles.button2 } onPress= {() => SetCapture(!isCaptured)}>
-        <Text style= {isCaptured ? styles.text1 : styles.text2 }>
-          {isCaptured ? "Capturé ✓" : "Capturer"}
+
+      <Pressable style= {captured ? styles.button1 : styles.button2 } onPress={onCapture}>
+        <Text style= {captured ? styles.text1 : styles.text2 }>
+          {captured ? "Capturé ✓" : "Capturer"}
         </Text>
       </Pressable>
     </View>
@@ -35,47 +44,46 @@ export default function PokemonCard({ name, number, type }) {
 
 const styles = StyleSheet.create({
   card1: {
+    flex: 1,
     backgroundColor: "#e5effe",
     borderWidth: 2,
     borderColor: "#2573e7",
     borderRadius: 15,
-    padding: 20,
-    marginHorizontal: 30,
-    marginVertical: 10,
+    padding: 10,
+    margin: 6,
     alignItems: "center",
-    justifyContent: "flex-start",
-    flexDirection: "row",
+    justifyContent: "space-between",
+    minHeight: 210,
   },
   card2: {
+    flex: 1,
     backgroundColor: "#ffffff",
     borderWidth: 2,
     borderColor: "#ffffff",
     borderRadius: 15,
-    padding: 20,
-    marginHorizontal: 30,
-    marginVertical: 10,
+    padding: 10,
+    margin: 6,
     alignItems: "center",
-    justifyContent: "flex-start",
-    flexDirection: "row",
+    justifyContent: "space-between",
+    minHeight: 210,
   },
   image: {
-    width: 80,
-    height: 80,
-    marginRight: 15,
+    width: 96,
+    height: 96,
   },
   infoContainer: {
-    flex: 1,
+    width: "100%",
+    alignItems: "center",
   },
   texts: {
     fontWeight: "500",
-    fontSize: 15,
+    fontSize: 13,
   },
   textsBold: {
     fontWeight: "600",
-    fontSize: 20,
+    fontSize: 17,
   },
   type: {
-    alignSelf: "flex-start",
     backgroundColor: "#eeeff7",
     borderRadius: 100,
     paddingHorizontal: 10,
@@ -85,8 +93,11 @@ const styles = StyleSheet.create({
   },
   button1: {
     backgroundColor: "#2573e7",
+    borderColor: "#2573e7",
+    borderWidth: 2,
     borderRadius: 20,
     padding: 5,
+    marginTop: 10,
   },
   button2: {
     color: "#2573e7",
@@ -94,6 +105,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "#2573e7",
     padding: 5,
+    marginTop: 10,
   },
   text1: {
     color: "#ffffff",

@@ -1,3 +1,4 @@
+import { router } from "expo-router";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 
 const ARTWORK =
@@ -24,7 +25,7 @@ export default function PokemonCard({ name, number, type, captured, onCapture}) 
   const color = TYPE_COLORS[type];
   
   return (
-    <View style={captured ? styles.card1 : styles.card2 }>
+    <Pressable onPress= {() => router.push(`/pokemon/${number}`)} style={captured ? styles.card1 : styles.card2 }>
       <Image source={{ uri: `${ARTWORK}${number}.png` }} style={styles.image} />
 
       <View style={styles.infoContainer}>
@@ -38,7 +39,7 @@ export default function PokemonCard({ name, number, type, captured, onCapture}) 
           {captured ? "Capturé ✓" : "Capturer"}
         </Text>
       </Pressable>
-    </View>
+    </Pressable>
   );
 }
 

@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
-import BadgeCard from "../components/BadgeCard";
-import PokemonCard from "../components/PokemonCard";
-import Titre from "../components/Titre";
-import POKEMONS from "../data/pokemons";
+import BadgeCard from "../../components/BadgeCard";
+import PokemonCard from "../../components/PokemonCard";
+import Titre from "../../components/Titre";
+import POKEMONS from "../../data/pokemons";
 
 const BADGES = [
   { number: 23, name: "Boulder Badge" },
@@ -35,7 +35,7 @@ export default function Index() {
       <View style={styles.header}>
         <Text style={styles.title}>Mon Pokédex</Text>
         <Text style={styles.count}>
-          {POKEMONS.length} Pokémon · {captures.length} capturés
+          {POKEMONS.length} Pokémon - {captures.length} capturés
         </Text>
 
         <View style={styles.filters}>

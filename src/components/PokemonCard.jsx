@@ -31,7 +31,7 @@ export default function PokemonCard({ name, number, type, captured, onCapture}) 
       <View style={styles.infoContainer}>
         <Text style={styles.texts}> # {number} </Text>
         <Text style={styles.textsBold}>{name} </Text>
-        <Text style={[styles.type, { backgroundColor: color }]}> {type} </Text>
+        {/* <Text style={[styles.type, { backgroundColor: color }]}> {type} </Text> */}
       </View>
 
       <Pressable style= {captured ? styles.button1 : styles.button2 } onPress={onCapture}>

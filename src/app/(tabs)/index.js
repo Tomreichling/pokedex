@@ -1,9 +1,11 @@
-import { useState } from "react";
-import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { useEffect, useState } from "react";
+import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import BadgeCard from "../../components/BadgeCard";
 import PokemonCard from "../../components/PokemonCard";
 import Titre from "../../components/Titre";
-import POKEMONS from "../../data/pokemons";
+
+
+const API = "https://pokeapi.co/api/v2/pokemon?limit=151";
 
 const BADGES = [
   { number: 23, name: "Boulder Badge" },
@@ -12,13 +14,28 @@ const BADGES = [
 ];
 
 export default function Index() {
-
+  const [pokemons, setpokemons] = useState(null);
 
   const [filtreFeu, SetFiltreFeu] = useState(false);
   const [filtreCaptures, SetFiltreCaptures] = useState(false);
-  const [captures, setCaptures] = useState<number[]>([]);
+  const [captures, setCaptures] = useState([]);
 
-  function capturer(number: number) {
+  async function charger() {
+  const reponse = await fetch(API);
+  const data = await reponse.json();
+  const liste = data.results.map((p, i) => ({ number: i + 1, name: p.name }));
+  setpokemons(liste);
+  }
+
+  useEffect(() => {
+  charger();
+  }, []);
+
+  if (pokemons === null) {
+  return <ActivityIndicator/>;
+  }
+
+  function capturer(number) {
     if (captures.includes(number)) {
       setCaptures(captures.filter((capturedNumber) => capturedNumber !== number));
     } else {
@@ -26,7 +43,7 @@ export default function Index() {
     }
   }
 
-  let visible = filtreFeu ? POKEMONS.filter((p) => p.type === "Feu") : POKEMONS;
+  let visible = filtreFeu ? pokemons.filter((p) => p.type === "Feu") : pokemons;
   visible = filtreCaptures ? visible.filter((p) => captures.includes(p.number)) : visible;
 
   return (
@@ -35,7 +52,7 @@ export default function Index() {
       <View style={styles.header}>
         <Text style={styles.title}>Mon Pokédex</Text>
         <Text style={styles.count}>
-          {POKEMONS.length} Pokémon - {captures.length} capturés
+          {pokemons.length} Pokémon - {captures.length} capturés
         </Text>
 
         <View style={styles.filters}>
